@@ -22,7 +22,6 @@ public class BusinessController {
     private final CategoriaBusinessService categoriaBusinessService;
     private final InventarioBusinessService inventarioBusinessService;
 
-
     public BusinessController(ProductoBusinessService productoBusinessService, CategoriaBusinessService categoriaBusinessService, InventarioBusinessService inventarioBusinessService) {
         this.productoBusinessService = productoBusinessService;
         this.categoriaBusinessService = categoriaBusinessService;
@@ -31,40 +30,46 @@ public class BusinessController {
 
     // Endpoints de Productos
     @GetMapping("/productos")
-    public List<ProductoDTO> obtenerTodosLosProductos() {
-        return productoBusinessService.obtenerTodosLosProductos();
+    public ResponseEntity<List<ProductoDTO>> obtenerTodosLosProductos() {
+        return ResponseEntity.ok(productoBusinessService.obtenerTodosLosProductos());
     }
 
     @GetMapping("/productos/{id}")
-    public ProductoDTO obtenerProductoPorId(@PathVariable Long id) {
-        return productoBusinessService.obtenerProductoPorId(id);
+    public ResponseEntity<ProductoDTO> obtenerProductoPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(productoBusinessService.obtenerProductoPorId(id));
     }
 
     @PostMapping("/productos")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ProductoDTO crearProducto(@RequestBody ProductoRequest request) {
-        return productoBusinessService.crearProducto(request);
+    public ResponseEntity<ProductoDTO> crearProducto(@RequestBody ProductoRequest request) {
+        return new ResponseEntity<>(productoBusinessService.crearProducto(request), HttpStatus.CREATED);
     }
 
     @GetMapping("/productos/categoria/{nombre}")
-    public List<ProductoDTO> obtenerProductosPorCategoria(@PathVariable String nombre) {
-        return productoBusinessService.obtenerProductosPorCategoria(nombre);
+    public ResponseEntity<List<ProductoDTO>> obtenerProductosPorCategoria(@PathVariable String nombre) {
+        return ResponseEntity.ok(productoBusinessService.obtenerProductosPorCategoria(nombre));
     }
 
-    // Endpoints de Categorías
+    // Endpoint de Categorías
     @GetMapping("/categorias")
-    public List<CategoriaDTO> obtenerTodasLasCategorias() {
-        return categoriaBusinessService.obtenerTodasLasCategorias();
+    public ResponseEntity<List<CategoriaDTO>> obtenerTodasLasCategorias() {
+        return ResponseEntity.ok(categoriaBusinessService.obtenerTodasLasCategorias());
+    }
+
+    // Endpoint de Inventario (¡EL QUE FALTABA!)
+    @GetMapping("/inventario")
+    public ResponseEntity<List<InventarioDTO>> obtenerTodoElInventario() {
+        return ResponseEntity.ok(inventarioBusinessService.obtenerTodoElInventario());
     }
 
     // Endpoints de Reportes
     @GetMapping("/reportes/stock-bajo")
-    public List<ProductoDTO> obtenerReporteStockBajo() {
-        return productoBusinessService.obtenerProductosConStockBajo();
+    public ResponseEntity<List<ProductoDTO>> obtenerProductosConStockBajo() {
+        return ResponseEntity.ok(productoBusinessService.obtenerProductosConStockBajo());
     }
 
     @GetMapping("/reportes/valor-inventario")
-    public BigDecimal obtenerReporteValorTotalInventario() {
-        return productoBusinessService.calcularValorTotalInventario();
+    public ResponseEntity<BigDecimal> obtenerValorTotalInventario() {
+        return ResponseEntity.ok(productoBusinessService.calcularValorTotalInventario());
     }
 }
+
