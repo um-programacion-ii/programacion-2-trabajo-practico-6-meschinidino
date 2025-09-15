@@ -6,10 +6,9 @@ import com.um.prog2.dataservice.entity.Producto;
 import com.um.prog2.dataservice.service.CategoriaService;
 import com.um.prog2.dataservice.service.InventarioService;
 import com.um.prog2.dataservice.service.ProductoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,18 +26,53 @@ public class DataController {
         this.inventarioService = inventarioService;
     }
 
+    // Endpoints de Productos
     @GetMapping("/productos")
-    public ResponseEntity<List<Producto>> obtenerTodosLosProductos() {
-        return ResponseEntity.ok(productoService.findAll());
+    public List<Producto> obtenerTodosLosProductos() {
+        return productoService.findAll();
     }
 
+    @GetMapping("/productos/{id}")
+    public Producto obtenerProductoPorId(@PathVariable Long id) {
+        return productoService.findById(id);
+    }
+
+    @PostMapping("/productos")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Producto crearProducto(@RequestBody Producto producto) {
+        return productoService.save(producto);
+    }
+
+    @PutMapping("/productos/{id}")
+    public Producto actualizarProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        return productoService.update(id, producto);
+    }
+
+    @DeleteMapping("/productos/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminarProducto(@PathVariable Long id) {
+        productoService.deleteById(id);
+    }
+
+    @GetMapping("/productos/categoria/{nombre}")
+    public List<Producto> obtenerProductosPorCategoria(@PathVariable String nombre) {
+        return productoService.findByCategoriaNombre(nombre);
+    }
+
+    // Endpoints de Categorías
     @GetMapping("/categorias")
-    public ResponseEntity<List<Categoria>> obtenerTodasLasCategorias() {
-        return ResponseEntity.ok(categoriaService.findAll());
+    public List<Categoria> obtenerTodasLasCategorias() {
+        return categoriaService.findAll();
     }
 
+    // Endpoints de Inventario
     @GetMapping("/inventario")
-    public ResponseEntity<List<Inventario>> obtenerTodoElInventario() {
-        return ResponseEntity.ok(inventarioService.findAll());
+    public List<Inventario> obtenerTodoElInventario() {
+        return inventarioService.findAll();
+    }
+
+    @GetMapping("/inventario/stock-bajo")
+    public List<Inventario> obtenerProductosConStockBajo() {
+        return inventarioService.findProductosConStockBajo();
     }
 }

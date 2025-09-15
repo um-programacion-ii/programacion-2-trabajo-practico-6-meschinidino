@@ -13,6 +13,6 @@ public class ProductoRequest {
     private String nombre;
     private String descripcion;
     private BigDecimal precio;
-    private Long categoriaId;
+    private String categoriaNombre;
     private Integer stock;
 }

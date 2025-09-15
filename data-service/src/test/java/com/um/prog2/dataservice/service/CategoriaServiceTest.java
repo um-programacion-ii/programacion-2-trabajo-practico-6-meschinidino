@@ -1,6 +1,7 @@
 package com.um.prog2.dataservice.service;
 
 import com.um.prog2.dataservice.entity.Categoria;
+import com.um.prog2.dataservice.exception.ResourceNotFoundException;
 import com.um.prog2.dataservice.repository.CategoriaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,53 +26,50 @@ class CategoriaServiceTest {
     private CategoriaService categoriaService;
 
     @Test
-    void cuandoFindAll_entoncesRetornaListaDeCategorias() {
+    void findAll_debeRetornarListaDeCategorias() {
         // Arrange
-        Categoria categoria1 = new Categoria();
-        categoria1.setId(1L);
-        Categoria categoria2 = new Categoria();
-        categoria2.setId(2L);
-        List<Categoria> listaEsperada = Arrays.asList(categoria1, categoria2);
-
-        when(categoriaRepository.findAll()).thenReturn(listaEsperada);
+        Categoria categoria = new Categoria(1L, "Electrónica", "Artículos electrónicos", Collections.emptyList());
+        when(categoriaRepository.findAll()).thenReturn(List.of(categoria));
 
         // Act
         List<Categoria> resultado = categoriaService.findAll();
 
         // Assert
         assertNotNull(resultado);
-        assertEquals(2, resultado.size());
-        verify(categoriaRepository, times(1)).findAll();
+        assertEquals(1, resultado.size());
+        assertEquals("Electrónica", resultado.get(0).getNombre());
+        verify(categoriaRepository).findAll();
     }
 
     @Test
-    void cuandoFindByIdExistente_entoncesRetornaCategoria() {
+    void findById_cuandoCategoriaExiste_debeRetornarCategoria() {
         // Arrange
-        Categoria categoria = new Categoria();
-        categoria.setId(1L);
-        categoria.setNombre("Electrónica");
-
+        Categoria categoria = new Categoria(1L, "Electrónica", "Artículos electrónicos", Collections.emptyList());
+        // CORRECCIÓN: Mockeamos el REPOSITORIO para que devuelva un Optional
         when(categoriaRepository.findById(1L)).thenReturn(Optional.of(categoria));
 
         // Act
-        Optional<Categoria> resultado = categoriaService.findById(1L);
+        // CORRECCIÓN: El SERVICIO ahora devuelve Categoria directamente
+        Categoria resultado = categoriaService.findById(1L);
 
         // Assert
-        assertTrue(resultado.isPresent());
-        assertEquals("Electrónica", resultado.get().getNombre());
-        verify(categoriaRepository, times(1)).findById(1L);
+        assertNotNull(resultado);
+        assertEquals(1L, resultado.getId());
+        assertEquals("Electrónica", resultado.getNombre());
+        verify(categoriaRepository).findById(1L);
     }
 
     @Test
-    void cuandoFindByIdNoExistente_entoncesRetornaOptionalVacio() {
+    void findById_cuandoCategoriaNoExiste_debeLanzarResourceNotFoundException() {
         // Arrange
-        when(categoriaRepository.findById(99L)).thenReturn(Optional.empty());
+        when(categoriaRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // Act
-        Optional<Categoria> resultado = categoriaService.findById(99L);
+        // Act & Assert
+        // Verificamos que se lanza la excepción correcta
+        assertThrows(ResourceNotFoundException.class, () -> {
+            categoriaService.findById(1L);
+        });
 
-        // Assert
-        assertFalse(resultado.isPresent());
-        verify(categoriaRepository, times(1)).findById(99L);
+        verify(categoriaRepository).findById(1L);
     }
 }
