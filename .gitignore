@@ -1,3 +1,7 @@
+# intellij trash
+.idea/
+
+
 # Compiled class file
 *.class
 
