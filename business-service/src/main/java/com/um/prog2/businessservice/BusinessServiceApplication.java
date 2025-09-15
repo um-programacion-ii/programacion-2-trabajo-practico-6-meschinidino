@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients // <-- Esta anotación le dice a Spring que busque y active los Feign Clients
+@EnableFeignClients
 public class BusinessServiceApplication {
 
     public static void main(String[] args) {

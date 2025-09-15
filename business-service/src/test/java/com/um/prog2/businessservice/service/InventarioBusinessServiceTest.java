@@ -2,18 +2,18 @@ package com.um.prog2.businessservice.service;
 
 import com.um.prog2.businessservice.client.DataServiceClient;
 import com.um.prog2.businessservice.dto.InventarioDTO;
+import com.um.prog2.businessservice.model.Inventario;
+import com.um.prog2.businessservice.model.Producto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class InventarioBusinessServiceTest {
@@ -25,13 +25,18 @@ class InventarioBusinessServiceTest {
     private InventarioBusinessService inventarioBusinessService;
 
     @Test
-    void cuandoObtenerTodoElInventario_entoncesDebeLlamarAlClienteFeign() {
-        // Arrange
-        // Corregimos el constructor para que coincida con los 6 campos del InventarioDTO
-        InventarioDTO inventarioMock = new InventarioDTO(1L, 101L, "Producto Test", 50, 10, LocalDateTime.now());
-        List<InventarioDTO> listaEsperada = Collections.singletonList(inventarioMock);
+    void cuandoObtenerTodoElInventario_entoncesRetornaListaDeDTOs() {
+        // Arrange: Preparamos los 'Models'.
+        Producto productoModel = new Producto();
+        productoModel.setId(1L);
+        productoModel.setNombre("Laptop Model");
 
-        when(dataServiceClient.obtenerTodoElInventario()).thenReturn(listaEsperada);
+        Inventario inventarioModel = new Inventario();
+        inventarioModel.setId(1L);
+        inventarioModel.setCantidad(25);
+        inventarioModel.setProducto(productoModel);
+
+        when(dataServiceClient.obtenerTodoElInventario()).thenReturn(List.of(inventarioModel));
 
         // Act
         List<InventarioDTO> resultado = inventarioBusinessService.obtenerTodoElInventario();
@@ -39,9 +44,7 @@ class InventarioBusinessServiceTest {
         // Assert
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
-        assertEquals("Producto Test", resultado.get(0).getProductoNombre());
-
-        verify(dataServiceClient, times(1)).obtenerTodoElInventario();
+        assertEquals(25, resultado.get(0).getCantidad());
+        assertEquals("Laptop Model", resultado.get(0).getProductoNombre());
     }
 }
-
