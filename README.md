@@ -1076,6 +1076,84 @@ docker compose down -v
 - Probar casos edge y validaciones
 - Simular fallos de red y servicios no disponibles
 
+
+
+# 📖 Documentación de la API (business-service)
+
+La API principal para consumir es la del **business-service**, que se encuentra en:  
+**http://localhost:8080/api**
+
+| Método | Endpoint                              | Descripción                                             | Body (Ejemplo)                                           |
+|--------|----------------------------------------|---------------------------------------------------------|----------------------------------------------------------|
+| GET    | /api/productos                         | Obtiene la lista de todos los productos.                | N/A                                                      |
+| GET    | /api/productos/{id}                    | Obtiene un producto por su ID.                          | N/A                                                      |
+| POST   | /api/productos                         | Crea un nuevo producto.                                 | `{ "nombre": "Teclado", "precio": 75.50, "stock": 100 }` |
+| GET    | /api/productos/categoria/{nombre}      | Obtiene productos filtrados por nombre de categoría.    | N/A                                                      |
+| GET    | /api/categorias                        | Obtiene la lista de todas las categorías.               | N/A                                                      |
+| GET    | /api/inventario                        | Obtiene el estado completo del inventario.              | N/A                                                      |
+| GET    | /api/reportes/stock-bajo               | Obtiene un reporte de productos con stock bajo.         | N/A                                                      |
+| GET    | /api/reportes/valor-inventario         | Calcula y devuelve el valor total del inventario.       | N/A                                                      |
+
+
+
+
+# 🐳 Documentación de Docker Compose para Bases de Datos
+
+Este archivo `docker-compose.yml` define dos servicios de base de datos: **MySQL** y **PostgreSQL**.  
+Se ejecutan en contenedores Docker, lo cual garantiza un entorno consistente y replicable.
+
+## 🚀 Requisitos Previos
+
+- Tener instalado [Docker](https://docs.docker.com/get-docker/)
+- Tener instalado [Docker Compose](https://docs.docker.com/compose/install/) (si usas Docker Desktop ya lo incluye)
+
+## 📁 Estructura General del Compose
+
+Este `docker-compose.yml`:
+
+- Levanta dos contenedores: uno con MySQL 8.4 y otro con PostgreSQL 16.
+- Crea una red compartida `microservices_network`.
+- Define volúmenes persistentes para ambas bases de datos.
+- Configura variables de entorno para inicialización automática.
+- Incluye `healthchecks` para asegurar que los servicios estén listos antes de usarlos.
+
+---
+
+## 📦 Servicios Incluidos
+
+### 1. MySQL
+
+- **Imagen:** `mysql:8.4`
+- **Puerto expuesto:** `3306`
+- **Nombre del contenedor:** `microservices_mysql`
+- **Credenciales por defecto:**
+    - Usuario: `microservices_user`
+    - Contraseña: `microservices_pass`
+    - Base de datos: `microservices_db`
+- **Comando de healthcheck:** `mysqladmin ping -h localhost`
+
+### 2. PostgreSQL
+
+- **Imagen:** `postgres:16`
+- **Puerto expuesto:** `5432`
+- **Nombre del contenedor:** `microservices_postgres`
+- **Credenciales por defecto:**
+    - Usuario: `microservices_user`
+    - Contraseña: `microservices_pass`
+    - Base de datos: `microservices_db`
+- **Comando de healthcheck:** `pg_isready -U microservices_user -d microservices_db`
+
+---
+
+## 🛠️ Cómo Usar
+
+1. **Guardar el archivo** como `docker-compose.yml`
+2. **Ejecutar los contenedores**:
+
+   ```bash
+   docker-compose up -d
+
+
 ## 📝 Consideraciones Éticas sobre el Uso de IA
 
 El uso de Inteligencia Artificial (IA) en este trabajo práctico debe seguir las siguientes pautas:
