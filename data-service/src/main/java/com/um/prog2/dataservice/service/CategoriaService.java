@@ -1,11 +1,12 @@
 package com.um.prog2.dataservice.service;
 
 import com.um.prog2.dataservice.entity.Categoria;
+import com.um.prog2.dataservice.exception.ResourceNotFoundException;
 import com.um.prog2.dataservice.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoriaService {
@@ -15,11 +16,14 @@ public class CategoriaService {
         this.categoriaRepository = categoriaRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Categoria> findAll() {
         return categoriaRepository.findAll();
     }
 
-    public Optional<Categoria> findById(Long id) {
-        return categoriaRepository.findById(id);
+    @Transactional(readOnly = true)
+    public Categoria findById(Long id) {
+        return categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con id: " + id));
     }
 }
