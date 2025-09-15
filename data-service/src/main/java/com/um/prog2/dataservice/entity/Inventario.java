@@ -1,5 +1,6 @@
 package com.um.prog2.dataservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore; // <-- ¡IMPORTANTE AÑADIR ESTE IMPORT!
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class Inventario {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id")
+    @JsonIgnore
     private Producto producto;
 
     @Column(nullable = false)
